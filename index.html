@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>FFmpeg命令生成器 - 专业视频处理工具</title>
+    <meta name="keywords" content="FFmpeg,视频处理,命令生成器,视频转换,批量处理,直播推流">
+    <meta name="description" content="专业的FFmpeg命令生成器，支持单文件和批量处理，包含视频编码、音频处理、滤镜效果、直播推流等完整功能">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-button.active { @apply border-b-2 border-blue-500 text-blue-600; }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+<main class="min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- 页头和导航 -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-2">FFmpeg 命令生成器</h1>
+                    <p class="text-gray-600">智能生成FFmpeg命令和批量处理脚本，支持视频编码、音频处理、滤镜效果、直播推流等专业功能</p>
+                </div>
+                <a href="install-guide.html" class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition">📖 安装指南</a>
+            </div>
+            
+            <!-- 标签页导航 -->
+            <div class="flex gap-2 border-b border-gray-300 mt-6">
+                <button class="tab-button active px-4 py-3 font-medium text-gray-700 hover:text-blue-600 transition" onclick="switchTab('video')">🎬 视频处理</button>
+                <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 transition" onclick="switchTab('stream')">📡 直播推流</button>
+            </div>
+        </div>
+
+        <!-- 视频处理标签页 -->
+        <div id="video" class="tab-content active space-y-8">
+            <!-- 快速预设 -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">🚀 快速预设</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyPreset('default')">📝 默认转换</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyPreset('youtube')">📺 YouTube</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyPreset('web')">🌐 Web优化</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyPreset('mobile')">📱 移动设备</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyPreset('high-quality')">💎 高质量</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyPreset('small-size')">📦 小体积</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyPreset('gif')">🎨 GIF</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyPreset('extract-audio')">🎵 提取音频</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyPreset('extract-video')">🎬 仅视频</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyPreset('screenshot')">📸 截图</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyPreset('merge')">🔗 合并</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyPreset('streaming')">📡 流媒体</button>
+                </div>
+            </div>
+
+            <!-- 主要内容区 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- 左侧：配置面板 -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- 基础配置 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">⚙️ 基础配置</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">输入文件</label>
+                                <input type="text" id="inputFile" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="input.mp4" value="input.mp4">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">输出文件</label>
+                                <input type="text" id="outputFile" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="output.mp4" value="output.mp4">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">开始时间</label>
+                                <input type="text" id="startTime" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="HH:MM:SS">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">持续时间</label>
+                                <input type="text" id="duration" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="HH:MM:SS">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 视频编码 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">🎬 视频编码</h2>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">编码器</label>
+                                    <select id="videoCodec" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">自动选择</option>
+                                        <option value="libx264">H.264</option>
+                                        <option value="libx265">H.265</option>
+                                        <option value="libvpx-vp9">VP9</option>
+                                        <option value="copy">复制</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">质量 (CRF): <span id="crfValue">23</span></label>
+                                    <input type="range" id="crf" min="0" max="51" value="23" class="w-full">
+                                </div>
+                            </div>
+                            <details class="cursor-pointer">
+                                <summary class="font-medium text-gray-700 py-2 hover:text-blue-600">更多选项 ▼</summary>
+                                <div class="mt-4 space-y-4 pt-4 border-t border-gray-200">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">编码速度</label>
+                                            <select id="preset" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <option value="">默认</option>
+                                                <option value="ultrafast">极快</option>
+                                                <option value="fast">快速</option>
+                                                <option value="medium">中等</option>
+                                                <option value="slow">慢速</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">帧率</label>
+                                            <input type="number" id="fps" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="保持原帧率">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">比特率 (kb/s)</label>
+                                            <input type="number" id="videoBitrate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="1000">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">分辨率</label>
+                                            <select id="resolution" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <option value="">保持原分辨率</option>
+                                                <option value="1920x1080">1080p</option>
+                                                <option value="1280x720">720p</option>
+                                                <option value="854x480">480p</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+
+                    <!-- 音频编码 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">🎵 音频编码</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">编码器</label>
+                                <select id="audioCodec" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">自动选择</option>
+                                    <option value="aac">AAC</option>
+                                    <option value="libmp3lame">MP3</option>
+                                    <option value="libopus">Opus</option>
+                                    <option value="copy">复制</option>
+                                    <option value="an">禁用音频</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">比特率</label>
+                                <select id="audioBitrate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">默认</option>
+                                    <option value="96">96 kb/s</option>
+                                    <option value="128">128 kb/s</option>
+                                    <option value="192">192 kb/s</option>
+                                    <option value="256">256 kb/s</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">声道</label>
+                                <select id="audioChannels" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">保持原声道</option>
+                                    <option value="1">单声道</option>
+                                    <option value="2">立体声</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 视频滤镜 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">✨ 视频滤镜</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-3">调整</label>
+                                <div class="space-y-3">
+                                    <div class="flex items-center gap-4">
+                                        <label class="w-16 text-sm text-gray-600">亮度</label>
+                                        <input type="range" id="brightness" min="-100" max="100" value="0" class="flex-1">
+                                        <span id="brightnessValue" class="w-12 text-right text-sm text-gray-600">0</span>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <label class="w-16 text-sm text-gray-600">对比度</label>
+                                        <input type="range" id="contrast" min="-100" max="100" value="0" class="flex-1">
+                                        <span id="contrastValue" class="w-12 text-right text-sm text-gray-600">0</span>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <label class="w-16 text-sm text-gray-600">饱和度</label>
+                                        <input type="range" id="saturation" min="-100" max="100" value="0" class="flex-1">
+                                        <span id="saturationValue" class="w-12 text-right text-sm text-gray-600">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t border-gray-200">
+                                <label class="block text-sm font-medium text-gray-700 mb-3">变换</label>
+                                <div class="space-y-3">
+                                    <div class="flex gap-4">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="checkbox" id="hflip" class="w-4 h-4 rounded border-gray-300">
+                                            <span class="text-sm text-gray-700">水平翻转</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="checkbox" id="vflip" class="w-4 h-4 rounded border-gray-300">
+                                            <span class="text-sm text-gray-700">垂直翻转</span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">旋转</label>
+                                        <select id="rotate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <option value="">不旋转</option>
+                                            <option value="90">顺时针 90°</option>
+                                            <option value="180">180°</option>
+                                            <option value="270">顺时针 270°</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t border-gray-200 grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">裁剪宽度</label>
+                                    <input type="number" id="cropWidth" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="宽度">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">裁剪高度</label>
+                                    <input type="number" id="cropHeight" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="高度">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">缩放宽度</label>
+                                    <input type="number" id="scaleWidth" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="宽度">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">缩放高度</label>
+                                    <input type="number" id="scaleHeight" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="高度">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 音频滤镜 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">🔊 音频滤镜</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">音量: <span id="volumeValue">100%</span></label>
+                                <input type="range" id="volume" min="0" max="200" value="100" class="w-full">
+                            </div>
+                            <div class="pt-4 border-t border-gray-200">
+                                <label class="block text-sm font-medium text-gray-700 mb-3">淡入淡出</label>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">淡入时间(秒)</label>
+                                        <input type="number" id="fadeInTime" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0" min="0" step="0.1">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">淡出时间(秒)</label>
+                                        <input type="number" id="fadeOutTime" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0" min="0" step="0.1">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">淡出开始(秒)</label>
+                                        <input type="number" id="fadeOutStart" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="自动" min="0" step="0.1">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pt-4 border-t border-gray-200">
+                                <label class="block text-sm font-medium text-gray-700 mb-3">效果</label>
+                                <div class="flex gap-4">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="normalize" class="w-4 h-4 rounded border-gray-300">
+                                        <span class="text-sm text-gray-700">标准化</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="echo" class="w-4 h-4 rounded border-gray-300">
+                                        <span class="text-sm text-gray-700">回声</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 高级选项 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">⚡ 高级选项</h2>
+                        <div class="space-y-4">
+                            <div class="flex gap-6">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="overwrite" class="w-4 h-4 rounded border-gray-300" checked>
+                                    <span class="text-sm text-gray-700">覆盖输出</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="fastStart" class="w-4 h-4 rounded border-gray-300">
+                                    <span class="text-sm text-gray-700">快速启动</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">自定义参数</label>
+                                <textarea id="customParams" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="2" placeholder="输入额外的FFmpeg参数..."></textarea>
+                            </div>
+                            <div class="pt-4 border-t border-gray-200">
+                                <label class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg cursor-pointer">
+                                    <input type="checkbox" id="batchMode" class="w-5 h-5 rounded border-gray-300" onchange="toggleBatch()">
+                                    <span class="font-medium text-gray-900">📁 批量处理模式</span>
+                                </label>
+                                <p class="text-xs text-gray-600 mt-2">勾选后生成批量处理脚本，使用当前配置处理整个目录</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 批量选项 -->
+                    <div id="batchOptions" style="display: none;" class="bg-white rounded-lg shadow-sm p-6 space-y-4">
+                        <h2 class="text-lg font-semibold text-gray-900">📂 批量配置</h2>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">选择平台</label>
+                            <div class="flex gap-3">
+                                <button onclick="selectPlatform('windows')" id="platform-windows" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-blue-500 text-sm font-medium transition">🪟 Windows</button>
+                                <button onclick="selectPlatform('mac')" id="platform-mac" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-blue-500 text-sm font-medium transition">🍎 macOS</button>
+                                <button onclick="selectPlatform('linux')" id="platform-linux" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-blue-500 text-sm font-medium transition">🐧 Linux</button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">输入目录</label>
+                                <input type="text" id="inputDir" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="/path/to/input">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">输出目录</label>
+                                <input type="text" id="outputDir" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="/path/to/output">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">文件类型</label>
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <span class="inline-block px-3 py-1 bg-gray-200 rounded-full text-xs cursor-pointer hover:bg-gray-300" onclick="addPattern('*.mp4')">*.mp4</span>
+                                <span class="inline-block px-3 py-1 bg-gray-200 rounded-full text-xs cursor-pointer hover:bg-gray-300" onclick="addPattern('*.avi')">*.avi</span>
+                                <span class="inline-block px-3 py-1 bg-gray-200 rounded-full text-xs cursor-pointer hover:bg-gray-300" onclick="addPattern('*.mkv')">*.mkv</span>
+                                <span class="inline-block px-3 py-1 bg-gray-200 rounded-full text-xs cursor-pointer hover:bg-gray-300" onclick="addPattern('*.mov')">*.mov</span>
+                                <span class="inline-block px-3 py-1 bg-gray-200 rounded-full text-xs cursor-pointer hover:bg-gray-300" onclick="addPattern('*.wmv')">*.wmv</span>
+                            </div>
+                            <input type="text" id="filePattern" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="*.mp4" value="*.mp4">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">输出文件名格式</label>
+                            <select id="outputFormat" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="{name}_out.{ext}">原文件名_out.扩展名</option>
+                                <option value="{name}_converted.{ext}">原文件名_converted.扩展名</option>
+                                <option value="converted_{name}.{ext}">converted_原文件名.扩展名</option>
+                                <option value="{name}.{ext}">覆盖原文件（谨慎）</option>
+                            </select>
+                        </div>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="recursive" class="w-4 h-4 rounded border-gray-300">
+                                <span class="text-sm text-gray-700">递归搜索子目录</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="batchParallel" class="w-4 h-4 rounded border-gray-300">
+                                <span class="text-sm text-gray-700">并行处理</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：命令输出 -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg shadow-sm p-6 sticky top-8">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">💻 生成的<span id="outputType">命令</span></h2>
+                        <div class="relative">
+                            <pre id="commandText" class="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-xs overflow-x-auto max-h-96">ffmpeg -i input.mp4 output.mp4</pre>
+                            <button onclick="copyCommand()" class="absolute top-2 right-2 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded transition">📋 复制</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 直播推流标签页 -->
+        <div id="stream" class="tab-content space-y-8">
+            <!-- 快速推流预设 -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">🚀 快速推流预设</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyStreamPreset('twitch')">📱 Twitch</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyStreamPreset('youtube')">📺 YouTube Live</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyStreamPreset('facebook')">👍 Facebook</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyStreamPreset('bilibili')">🎬 B站</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyStreamPreset('custom-rtmp')">⚙️ 自定义RTMP</button>
+                    <button class="p-3 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-sm font-medium text-center" onclick="applyStreamPreset('hls')">📡 HLS</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- 直播配置面板 -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- 推流源配置 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">📥 推流源配置</h2>
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">输入源</label>
+                                <select id="streamInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="toggleStreamInput()">
+                                    <option value="file">本地文件</option>
+                                    <option value="camera">摄像头</option>
+                                    <option value="desktop">桌面录屏</option>
+                                    <option value="rtsp">RTSP流</option>
+                                    <option value="udp">UDP流</option>
+                                </select>
+                            </div>
+                            <div id="streamFileInput">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">本地文件路径</label>
+                                <input type="text" id="streamFile" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="input.mp4" value="input.mp4">
+                            </div>
+                            <div id="streamCameraInput" style="display: none;">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">摄像头设备</label>
+                                <input type="text" id="cameraDevice" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Windows: video=&quot;Camera&quot; | macOS: 0 | Linux: /dev/video0">
+                            </div>
+                            <div id="streamDesktopInput" style="display: none;">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">桌面捕获参数</label>
+                                <input type="text" id="desktopParams" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="-f gdigrab -i desktop (Windows) 或 -f x11grab -i :0.0 (Linux)">
+                            </div>
+                            <div id="streamRtspInput" style="display: none;">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">RTSP地址</label>
+                                <input type="text" id="rtspUrl" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="rtsp://ip:port/path">
+                            </div>
+                            <div id="streamUdpInput" style="display: none;">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">UDP地址</label>
+                                <input type="text" id="udpUrl" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="udp://127.0.0.1:1234">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 推流目标配置 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">📤 推流目标配置</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">推流协议</label>
+                                <select id="streamProtocol" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="rtmp">RTMP (直播流)</option>
+                                    <option value="rtmps">RTMPS (加密)</option>
+                                    <option value="hls">HLS (HTTP Live Streaming)</option>
+                                    <option value="dash">DASH (Dynamic Adaptive)</option>
+                                    <option value="http">HTTP</option>
+                                    <option value="udp">UDP</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">推流地址</label>
+                                <input type="text" id="streamUrl" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="rtmp://server/app/streamkey 或 http://server/path/output.m3u8">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 视频编码配置 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">🎬 视频编码配置</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">编码器</label>
+                                <select id="streamVideoCodec" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="libx264">H.264</option>
+                                    <option value="libx265">H.265</option>
+                                    <option value="libvpx">VP8</option>
+                                    <option value="libvpx-vp9">VP9</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">比特率 (kb/s)</label>
+                                <select id="streamVideoBitrate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="1000">1000 kb/s</option>
+                                    <option value="2000">2000 kb/s</option>
+                                    <option value="3000">3000 kb/s (推荐)</option>
+                                    <option value="5000">5000 kb/s</option>
+                                    <option value="8000">8000 kb/s</option>
+                                    <option value="10000">10000 kb/s</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">帧率</label>
+                                <select id="streamFps" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">保持原帧率</option>
+                                    <option value="24">24fps</option>
+                                    <option value="30">30fps (推荐)</option>
+                                    <option value="60">60fps</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">分辨率</label>
+                                <select id="streamResolution" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">保持原分辨率</option>
+                                    <option value="1920x1080">1080p</option>
+                                    <option value="1280x720">720p (推荐)</option>
+                                    <option value="854x480">480p</option>
+                                    <option value="640x360">360p</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">编码速度</label>
+                                <select id="streamPreset" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="ultrafast">极快 (CPU低)</option>
+                                    <option value="fast">快速</option>
+                                    <option value="medium">中等 (推荐)</option>
+                                    <option value="slow">慢速</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">GOP大小</label>
+                                <input type="number" id="gopSize" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="60" value="60">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 音频编码配置 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">🎵 音频编码配置</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">编码器</label>
+                                <select id="streamAudioCodec" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="aac">AAC</option>
+                                    <option value="libmp3lame">MP3</option>
+                                    <option value="libopus">Opus</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">比特率</label>
+                                <select id="streamAudioBitrate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="64">64 kb/s</option>
+                                    <option value="96">96 kb/s</option>
+                                    <option value="128">128 kb/s (推荐)</option>
+                                    <option value="192">192 kb/s</option>
+                                    <option value="256">256 kb/s</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">采样率</label>
+                                <select id="streamAudioSamplerate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">保持原采样率</option>
+                                    <option value="44100">44100 Hz</option>
+                                    <option value="48000">48000 Hz (推荐)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">声道</label>
+                                <select id="streamAudioChannels" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">保持原声道</option>
+                                    <option value="1">单声道</option>
+                                    <option value="2">立体声 (推荐)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 高级推流选项 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">⚡ 高级选项</h2>
+                        <div class="space-y-4">
+                            <div class="flex gap-6">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="streamLoop" class="w-4 h-4 rounded border-gray-300">
+                                    <span class="text-sm text-gray-700">循环推流</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="streamRtbufsize" class="w-4 h-4 rounded border-gray-300" checked>
+                                    <span class="text-sm text-gray-700">实时缓冲</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">缓冲大小 (bytes)</label>
+                                <input type="text" id="rtbufsize" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="3041280" value="3041280">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">自定义参数</label>
+                                <textarea id="streamCustomParams" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="2" placeholder="输入额外的FFmpeg参数..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 推流命令输出 -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg shadow-sm p-6 sticky top-8">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">💻 推流命令</h2>
+                        <div class="relative">
+                            <pre id="streamCommandText" class="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-xs overflow-x-auto max-h-96">ffmpeg -i input.mp4 -c:v libx264 -preset fast -b:v 2500k -c:a aac -b:a 128k -f flv rtmp://server/app/key</pre>
+                            <button onclick="copyStreamCommand()" class="absolute top-2 right-2 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded transition">📋 复制</button>
+                        </div>
+                        <div class="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <p class="text-xs text-yellow-800">
+                                <strong>💡 提示：</strong><br>
+                                • 推流地址需要替换为实际的推流密钥<br>
+                                • 确保网络连接稳定<br>
+                                • 根据网络速度调整比特率<br>
+                                • 摄像头输入需根据系统调整设备参数
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    const defaultValues = {
+        inputFile: 'input.mp4',
+        outputFile: 'output.mp4',
+        startTime: '',
+        duration: '',
+        videoCodec: '',
+        crf: 23,
+        preset: '',
+        videoBitrate: '',
+        fps: '',
+        resolution: '',
+        audioCodec: '',
+        audioBitrate: '',
+        audioChannels: '',
+        brightness: 0,
+        contrast: 0,
+        saturation: 0,
+        hflip: false,
+        vflip: false,
+        rotate: '',
+        cropWidth: '',
+        cropHeight: '',
+        scaleWidth: '',
+        scaleHeight: '',
+        volume: 100,
+        fadeInTime: '',
+        fadeOutTime: '',
+        fadeOutStart: '',
+        normalize: false,
+        echo: false,
+        overwrite: true,
+        fastStart: false,
+        customParams: '',
+        batchMode: false,
+        inputDir: '',
+        filePattern: '*.mp4',
+        outputDir: '',
+        outputFormat: '{name}_out.{ext}',
+        recursive: false,
+        batchParallel: false
+    };
+
+    let selectedPlatform = '';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('change', () => {
+                generateCommand();
+            });
+            input.addEventListener('input', () => {
+                generateCommand();
+            });
+        });
+
+        const ranges = document.querySelectorAll('input[type="range"]');
+        ranges.forEach(range => {
+            range.addEventListener('input', function() {
+                const valueSpan = document.getElementById(this.id + 'Value');
+                if (valueSpan) {
+                    let value = this.value;
+                    if (this.id === 'volume') {
+                        value += '%';
+                    }
+                    valueSpan.textContent = value;
+                }
+                generateCommand();
+            });
+        });
+
+        generateCommand();
+    });
+
+    function toggleBatch() {
+        const batchMode = document.getElementById('batchMode');
+        const batchOptions = document.getElementById('batchOptions');
+        const outputType = document.getElementById('outputType');
+
+        if (batchMode.checked) {
+            batchOptions.style.display = 'block';
+            outputType.textContent = '脚本';
+        } else {
+            batchOptions.style.display = 'none';
+            outputType.textContent = '命令';
+        }
+
+        generateCommand();
+    }
+
+    function selectPlatform(platform) {
+        selectedPlatform = platform;
+
+        document.querySelectorAll('[id^="platform-"]').forEach(btn => {
+            btn.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
+        });
+        
+        const btn = document.getElementById('platform-' + platform);
+        btn.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
+
+        generateCommand();
+    }
+
+    function addPattern(pattern) {
+        document.getElementById('filePattern').value = pattern;
+        generateCommand();
+    }
+
+    function generateCommand() {
+        const batchMode = document.getElementById('batchMode').checked;
+
+        if (batchMode) {
+            generateBatchScript();
+        } else {
+            generateSingleCommand();
+        }
+    }
+
+    function generateSingleCommand() {
+        let command = 'ffmpeg';
+
+        const inputFile = document.getElementById('inputFile').value;
+        if (inputFile) {
+            command += ` -i "${inputFile}"`;
+        } else {
+            command += ` -i input.mp4`;
+        }
+
+        const startTime = document.getElementById('startTime').value;
+        if (startTime) {
+            command += ` -ss ${startTime}`;
+        }
+
+        const duration = document.getElementById('duration').value;
+        if (duration) {
+            command += ` -t ${duration}`;
+        }
+
+        const videoCodec = document.getElementById('videoCodec').value;
+        if (videoCodec) {
+            command += ` -c:v ${videoCodec}`;
+        }
+
+        const crf = document.getElementById('crf').value;
+        if (videoCodec && crf != defaultValues.crf) {
+            command += ` -crf ${crf}`;
+        }
+
+        const preset = document.getElementById('preset').value;
+        if (preset) {
+            command += ` -preset ${preset}`;
+        }
+
+        const videoBitrate = document.getElementById('videoBitrate').value;
+        if (videoBitrate) {
+            command += ` -b:v ${videoBitrate}k`;
+        }
+
+        const fps = document.getElementById('fps').value;
+        if (fps) {
+            command += ` -r ${fps}`;
+        }
+
+        const resolution = document.getElementById('resolution').value;
+        if (resolution) {
+            command += ` -s ${resolution}`;
+        }
+
+        const audioCodec = document.getElementById('audioCodec').value;
+        if (audioCodec) {
+            command += ` -c:a ${audioCodec}`;
+        }
+
+        const audioBitrate = document.getElementById('audioBitrate').value;
+        if (audioBitrate) {
+            command += ` -b:a ${audioBitrate}k`;
+        }
+
+        const audioChannels = document.getElementById('audioChannels').value;
+        if (audioChannels) {
+            command += ` -ac ${audioChannels}`;
+        }
+
+        let videoFilters = [];
+
+        const brightness = document.getElementById('brightness').value;
+        const contrast = document.getElementById('contrast').value;
+        const saturation = document.getElementById('saturation').value;
+
+        if (brightness != defaultValues.brightness ||
+            contrast != defaultValues.contrast ||
+            saturation != defaultValues.saturation) {
+            let eqFilter = 'eq=';
+            let params = [];
+            if (brightness != defaultValues.brightness) {
+                params.push(`brightness=${(brightness/100 + 1).toFixed(2)}`);
+            }
+            if (contrast != defaultValues.contrast) {
+                params.push(`contrast=${(contrast/100 + 1).toFixed(2)}`);
+            }
+            if (saturation != defaultValues.saturation) {
+                params.push(`saturation=${(saturation/100 + 1).toFixed(2)}`);
+            }
+            eqFilter += params.join(':');
+            videoFilters.push(eqFilter);
+        }
+
+        if (document.getElementById('hflip').checked) videoFilters.push('hflip');
+        if (document.getElementById('vflip').checked) videoFilters.push('vflip');
+
+        const rotate = document.getElementById('rotate').value;
+        if (rotate) {
+            videoFilters.push(`rotate=${rotate}*PI/180`);
+        }
+
+        const cropWidth = document.getElementById('cropWidth').value;
+        const cropHeight = document.getElementById('cropHeight').value;
+
+        if (cropWidth && cropHeight) {
+            videoFilters.push(`crop=${cropWidth}:${cropHeight}`);
+        }
+
+        const scaleWidth = document.getElementById('scaleWidth').value;
+        const scaleHeight = document.getElementById('scaleHeight').value;
+
+        if (scaleWidth || scaleHeight) {
+            let scaleFilter = 'scale=';
+            if (scaleWidth && scaleHeight) {
+                scaleFilter += `${scaleWidth}:${scaleHeight}`;
+            } else if (scaleWidth) {
+                scaleFilter += `${scaleWidth}:-1`;
+            } else {
+                scaleFilter += `-1:${scaleHeight}`;
+            }
+            videoFilters.push(scaleFilter);
+        }
+
+        let audioFilters = [];
+
+        const volume = document.getElementById('volume').value;
+        if (volume != defaultValues.volume) {
+            audioFilters.push(`volume=${volume/100}`);
+        }
+
+        const fadeInTime = document.getElementById('fadeInTime').value;
+        const fadeOutTime = document.getElementById('fadeOutTime').value;
+        const fadeOutStart = document.getElementById('fadeOutStart').value;
+
+        if (fadeInTime || fadeOutTime) {
+            if (fadeInTime) {
+                audioFilters.push(`afade=t=in:st=0:d=${fadeInTime}`);
+            }
+            if (fadeOutTime) {
+                const start = fadeOutStart || '9';
+                audioFilters.push(`afade=t=out:st=${start}:d=${fadeOutTime}`);
+            }
+        }
+
+        if (document.getElementById('normalize').checked) {
+            audioFilters.push('loudnorm=I=-16:LRA=11:TP=-1.5');
+        }
+
+        if (document.getElementById('echo').checked) {
+            audioFilters.push('aecho=0.8:0.9:1000|1800:0.3|0.25');
+        }
+
+        if (videoFilters.length > 0) {
+            command += ` -vf "${videoFilters.join(',')}"`;
+        }
+
+        if (audioFilters.length > 0) {
+            command += ` -af "${audioFilters.join(',')}"`;
+        }
+
+        const fastStart = document.getElementById('fastStart').checked;
+        if (fastStart) {
+            command += ' -movflags +faststart';
+        }
+
+        const customParams = document.getElementById('customParams').value;
+        if (customParams) {
+            command += ` ${customParams}`;
+        }
+
+        const outputFile = document.getElementById('outputFile').value;
+        if (outputFile) {
+            command += ` "${outputFile}"`;
+        } else {
+            command += ' output.mp4';
+        }
+
+        const overwrite = document.getElementById('overwrite').checked;
+        if (overwrite) {
+            command = 'ffmpeg -y' + command.substring(6);
+        }
+
+        document.getElementById('commandText').textContent = command;
+    }
+
+    function generateBatchScript() {
+        if (!selectedPlatform) {
+            document.getElementById('commandText').textContent = '请先选择目标平台';
+            return;
+        }
+
+        const inputDir = document.getElementById('inputDir').value || './input';
+        const outputDir = document.getElementById('outputDir').value || './output';
+        const filePattern = document.getElementById('filePattern').value || '*.mp4';
+        const recursive = document.getElementById('recursive').checked;
+        const outputFormat = document.getElementById('outputFormat').value;
+        const parallel = document.getElementById('batchParallel').checked;
+
+        const videoCodec = document.getElementById('videoCodec').value;
+        const crf = document.getElementById('crf').value;
+        const preset = document.getElementById('preset').value;
+        const videoBitrate = document.getElementById('videoBitrate').value;
+        const fps = document.getElementById('fps').value;
+        const resolution = document.getElementById('resolution').value;
+        const audioCodec = document.getElementById('audioCodec').value;
+        const audioBitrate = document.getElementById('audioBitrate').value;
+        const audioChannels = document.getElementById('audioChannels').value;
+        const overwrite = document.getElementById('overwrite').checked;
+        const fastStart = document.getElementById('fastStart').checked;
+        const customParams = document.getElementById('customParams').value;
+
+        let videoFilters = [];
+        const brightness = document.getElementById('brightness').value;
+        const contrast = document.getElementById('contrast').value;
+        const saturation = document.getElementById('saturation').value;
+
+        if (brightness != defaultValues.brightness ||
+            contrast != defaultValues.contrast ||
+            saturation != defaultValues.saturation) {
+            let eqFilter = 'eq=';
+            let params = [];
+            if (brightness != defaultValues.brightness) {
+                params.push(`brightness=${(brightness/100 + 1).toFixed(2)}`);
+            }
+            if (contrast != defaultValues.contrast) {
+                params.push(`contrast=${(contrast/100 + 1).toFixed(2)}`);
+            }
+            if (saturation != defaultValues.saturation) {
+                params.push(`saturation=${(saturation/100 + 1).toFixed(2)}`);
+            }
+            eqFilter += params.join(':');
+            videoFilters.push(eqFilter);
+        }
+
+        if (document.getElementById('hflip').checked) videoFilters.push('hflip');
+        if (document.getElementById('vflip').checked) videoFilters.push('vflip');
+
+        const rotate = document.getElementById('rotate').value;
+        if (rotate) {
+            videoFilters.push(`rotate=${rotate}*PI/180`);
+        }
+
+        const cropWidth = document.getElementById('cropWidth').value;
+        const cropHeight = document.getElementById('cropHeight').value;
+        if (cropWidth && cropHeight) {
+            videoFilters.push(`crop=${cropWidth}:${cropHeight}`);
+        }
+
+        const scaleWidth = document.getElementById('scaleWidth').value;
+        const scaleHeight = document.getElementById('scaleHeight').value;
+        if (scaleWidth || scaleHeight) {
+            let scaleFilter = 'scale=';
+            if (scaleWidth && scaleHeight) {
+                scaleFilter += `${scaleWidth}:${scaleHeight}`;
+            } else if (scaleWidth) {
+                scaleFilter += `${scaleWidth}:-1`;
+            } else {
+                scaleFilter += `-1:${scaleHeight}`;
+            }
+            videoFilters.push(scaleFilter);
+        }
+
+        let audioFilters = [];
+        const volume = document.getElementById('volume').value;
+        if (volume != defaultValues.volume) {
+            audioFilters.push(`volume=${volume/100}`);
+        }
+
+        const fadeInTime = document.getElementById('fadeInTime').value;
+        const fadeOutTime = document.getElementById('fadeOutTime').value;
+        const fadeOutStart = document.getElementById('fadeOutStart').value;
+
+        if (fadeInTime || fadeOutTime) {
+            if (fadeInTime) {
+                audioFilters.push(`afade=t=in:st=0:d=${fadeInTime}`);
+            }
+            if (fadeOutTime) {
+                const start = fadeOutStart || '9';
+                audioFilters.push(`afade=t=out:st=${start}:d=${fadeOutTime}`);
+            }
+        }
+
+        if (document.getElementById('normalize').checked) {
+            audioFilters.push('loudnorm=I=-16:LRA=11:TP=-1.5');
+        }
+
+        if (document.getElementById('echo').checked) {
+            audioFilters.push('aecho=0.8:0.9:1000|1800:0.3|0.25');
+        }
+
+        let ffmpegParams = [];
+        if (overwrite) ffmpegParams.push('-y');
+        ffmpegParams.push('-i "%INPUT_FILE%"');
+
+        if (videoCodec) ffmpegParams.push(`-c:v ${videoCodec}`);
+        if (videoCodec && crf != defaultValues.crf) ffmpegParams.push(`-crf ${crf}`);
+        if (preset) ffmpegParams.push(`-preset ${preset}`);
+        if (videoBitrate) ffmpegParams.push(`-b:v ${videoBitrate}k`);
+        if (fps) ffmpegParams.push(`-r ${fps}`);
+        if (resolution) ffmpegParams.push(`-s ${resolution}`);
+
+        if (audioCodec) ffmpegParams.push(`-c:a ${audioCodec}`);
+        if (audioBitrate) ffmpegParams.push(`-b:a ${audioBitrate}k`);
+        if (audioChannels) ffmpegParams.push(`-ac ${audioChannels}`);
+
+        if (videoFilters.length > 0) ffmpegParams.push(`-vf "${videoFilters.join(',')}"`);
+        if (audioFilters.length > 0) ffmpegParams.push(`-af "${audioFilters.join(',')}"`);
+
+        if (fastStart) ffmpegParams.push('-movflags +faststart');
+        if (customParams) ffmpegParams.push(customParams);
+
+        ffmpegParams.push('"%OUTPUT_FILE%"');
+
+        let script = '';
+
+        if (selectedPlatform === 'windows') {
+            script = '@echo off\n';
+            script += 'REM FFmpeg Batch Processing Script\n';
+            script += 'setlocal enabledelayedexpansion\n\n';
+
+            script += `set "INPUT_DIR=${inputDir}"\n`;
+            script += `set "OUTPUT_DIR=${outputDir}"\n`;
+            script += `set "PATTERN=${filePattern}"\n\n`;
+
+            script += 'if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%"\n\n';
+
+            if (recursive) {
+                script += 'for /r "%INPUT_DIR%" %%f in (%PATTERN%) do (\n';
+            } else {
+                script += 'for %%f in ("%INPUT_DIR%\\%PATTERN%") do (\n';
+            }
+
+            script += '    set "INPUT_FILE=%%f"\n';
+            script += '    set "FILENAME=%%~nf"\n';
+            script += '    set "EXTENSION=%%~xf"\n';
+
+            let outputName = outputFormat
+                .replace('{name}', '!FILENAME:~0,-!EXTENSION!!')
+                .replace('{ext}', '!EXTENSION:~1!');
+
+            script += `    set "OUTPUT_FILE=%OUTPUT_DIR%\\${outputName}"\n`;
+            script += '    echo Processing: %%~nxf\n';
+            script += '    ffmpeg ' + ffmpegParams.join(' ') + '\n';
+            script += '    echo Completed: !OUTPUT_FILE!\n\n';
+            script += ')\n\n';
+            script += 'echo Batch processing complete!\n';
+            script += 'pause\n';
+
+        } else if (selectedPlatform === 'mac' || selectedPlatform === 'linux') {
+            script = '#!/bin/bash\n';
+            script += '# FFmpeg Batch Processing Script\n\n';
+
+            script += `INPUT_DIR="${inputDir}"\n`;
+            script += `OUTPUT_DIR="${outputDir}"\n`;
+            script += `PATTERN="${filePattern}"\n\n`;
+
+            script += 'mkdir -p "$OUTPUT_DIR"\n\n';
+
+            if (parallel) {
+                script += 'process_file() {\n';
+                script += '    input_file="$1"\n';
+                script += '    filename=$(basename "$input_file")\n';
+                script += '    name="${filename%.*}"\n';
+                script += '    ext="${filename##*.}"\n';
+
+                let outputName = outputFormat
+                    .replace('{name}', '$name')
+                    .replace('{ext}', '$ext');
+
+                script += `    output_file="$OUTPUT_DIR/${outputName}"\n`;
+                script += '    echo "Processing: $filename"\n';
+                script += '    ffmpeg ' + ffmpegParams.join(' ').replace(/%INPUT_FILE%/g, '"$input_file"').replace(/%OUTPUT_FILE%/g, '"$output_file"') + '\n';
+                script += '    echo "Completed: $output_file"\n';
+                script += '}\n\n';
+
+                script += 'export -f process_file\n\n';
+
+                if (recursive) {
+                    script += `find "$INPUT_DIR" -name "$PATTERN" | xargs -P 4 -I {} bash -c 'process_file "$@"' _ {}\n`;
+                } else {
+                    script += `find "$INPUT_DIR" -maxdepth 1 -name "$PATTERN" | xargs -P 4 -I {} bash -c 'process_file "$@"' _ {}\n`;
+                }
+            } else {
+                if (recursive) {
+                    script += `find "$INPUT_DIR" -name "$PATTERN" | while read -r file; do\n`;
+                } else {
+                    script += `find "$INPUT_DIR" -maxdepth 1 -name "$PATTERN" | while read -r file; do\n`;
+                }
+
+                script += '    filename=$(basename "$file")\n';
+                script += '    name="${filename%.*}"\n';
+                script += '    ext="${filename##*.}"\n';
+
+                let outputName = outputFormat
+                    .replace('{name}', '$name')
+                    .replace('{ext}', '$ext');
+
+                script += `    output_file="$OUTPUT_DIR/${outputName}"\n`;
+                script += '    echo "Processing: $filename"\n';
+                script += '    ffmpeg ' + ffmpegParams.join(' ').replace(/%INPUT_FILE%/g, '"$file"').replace(/%OUTPUT_FILE%/g, '"$output_file"') + '\n';
+                script += '    echo "Completed: $output_file"\n';
+                script += 'done\n';
+            }
+
+            script += '\necho "Batch processing complete!"\n';
+        }
+
+        document.getElementById('commandText').textContent = script;
+    }
+
+    function copyCommand() {
+        const commandText = document.getElementById('commandText').textContent;
+        navigator.clipboard.writeText(commandText).then(() => {
+            const btn = event.target;
+            btn.textContent = '✓ 已复制';
+            setTimeout(() => {
+                btn.textContent = '📋 复制';
+            }, 2000);
+        });
+    }
+
+    function applyPreset(preset) {
+        Object.keys(defaultValues).forEach(key => {
+            const element = document.getElementById(key);
+            if (element) {
+                if (element.type === 'checkbox') {
+                    element.checked = defaultValues[key];
+                } else if (element.type === 'range') {
+                    element.value = defaultValues[key];
+                    const valueSpan = document.getElementById(key + 'Value');
+                    if (valueSpan) {
+                        let value = defaultValues[key];
+                        if (key === 'volume') {
+                            value += '%';
+                        }
+                        valueSpan.textContent = value;
+                    }
+                } else {
+                    element.value = defaultValues[key];
+                }
+            }
+        });
+
+        switch(preset) {
+            case 'default':
+                break;
+
+            case 'youtube':
+                document.getElementById('videoCodec').value = 'libx264';
+                document.getElementById('crf').value = '23';
+                document.getElementById('preset').value = 'medium';
+                document.getElementById('audioCodec').value = 'aac';
+                document.getElementById('audioBitrate').value = '128';
+                document.getElementById('fastStart').checked = true;
+                break;
+
+            case 'web':
+                document.getElementById('outputFile').value = 'output.webm';
+                document.getElementById('videoCodec').value = 'libvpx-vp9';
+                document.getElementById('crf').value = '31';
+                document.getElementById('audioCodec').value = 'libopus';
+                document.getElementById('audioBitrate').value = '96';
+                break;
+
+            case 'mobile':
+                document.getElementById('videoCodec').value = 'libx264';
+                document.getElementById('crf').value = '28';
+                document.getElementById('resolution').value = '854x480';
+                document.getElementById('audioBitrate').value = '96';
+                break;
+
+            case 'high-quality':
+                document.getElementById('videoCodec').value = 'libx265';
+                document.getElementById('crf').value = '18';
+                document.getElementById('preset').value = 'slow';
+                document.getElementById('audioCodec').value = 'flac';
+                break;
+
+            case 'small-size':
+                document.getElementById('videoCodec').value = 'libx264';
+                document.getElementById('crf').value = '35';
+                document.getElementById('preset').value = 'fast';
+                document.getElementById('resolution').value = '640x360';
+                document.getElementById('audioBitrate').value = '64';
+                break;
+
+            case 'gif':
+                document.getElementById('outputFile').value = 'output.gif';
+                document.getElementById('fps').value = '15';
+                document.getElementById('resolution').value = '640x360';
+                document.getElementById('customParams').value = '-loop 0';
+                break;
+
+            case 'extract-audio':
+                document.getElementById('outputFile').value = 'output.mp3';
+                document.getElementById('videoCodec').value = 'an';
+                document.getElementById('audioCodec').value = 'libmp3lame';
+                document.getElementById('audioBitrate').value = '192';
+                break;
+
+            case 'extract-video':
+                document.getElementById('audioCodec').value = 'an';
+                break;
+
+            case 'screenshot':
+                document.getElementById('outputFile').value = 'screenshot.png';
+                document.getElementById('customParams').value = '-vframes 1';
+                break;
+
+            case 'merge':
+                document.getElementById('customParams').value = '-f concat -safe 0 -i filelist.txt';
+                document.getElementById('videoCodec').value = 'copy';
+                document.getElementById('audioCodec').value = 'copy';
+                break;
+
+            case 'streaming':
+                document.getElementById('videoCodec').value = 'libx264';
+                document.getElementById('preset').value = 'veryfast';
+                document.getElementById('crf').value = '23';
+                document.getElementById('audioCodec').value = 'aac';
+                document.getElementById('customParams').value = '-f hls -hls_time 10 -hls_list_size 0';
+                document.getElementById('outputFile').value = 'output.m3u8';
+                break;
+        }
+
+        generateCommand();
+    }
+
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('active');
+        });
+        document.getElementById(tab).classList.add('active');
+        document.querySelector(`.tab-button[onclick="switchTab('${tab}')"]`).classList.add('active');
+    }
+
+    function applyStreamPreset(preset) {
+        switch(preset) {
+            case 'twitch':
+                document.getElementById('streamProtocol').value = 'rtmp';
+                document.getElementById('streamUrl').value = 'rtmp://live.twitch.tv/app/{stream_key}';
+                document.getElementById('streamVideoCodec').value = 'libx264';
+                document.getElementById('streamVideoBitrate').value = '3000';
+                document.getElementById('streamFps').value = '30';
+                document.getElementById('streamResolution').value = '1280x720';
+                document.getElementById('streamPreset').value = 'medium';
+                document.getElementById('streamAudioCodec').value = 'aac';
+                document.getElementById('streamAudioBitrate').value = '128';
+                document.getElementById('streamAudioSamplerate').value = '48000';
+                document.getElementById('streamAudioChannels').value = '2';
+                break;
+
+            case 'youtube':
+                document.getElementById('streamProtocol').value = 'rtmp';
+                document.getElementById('streamUrl').value = 'rtmp://a.rtmp.youtube.com/live2/{stream_key}';
+                document.getElementById('streamVideoCodec').value = 'libx264';
+                document.getElementById('streamVideoBitrate').value = '3000';
+                document.getElementById('streamFps').value = '30';
+                document.getElementById('streamResolution').value = '1280x720';
+                document.getElementById('streamPreset').value = 'medium';
+                document.getElementById('streamAudioCodec').value = 'aac';
+                document.getElementById('streamAudioBitrate').value = '128';
+                document.getElementById('streamAudioSamplerate').value = '48000';
+                document.getElementById('streamAudioChannels').value = '2';
+                break;
+
+            case 'facebook':
+                document.getElementById('streamProtocol').value = 'rtmps';
+                document.getElementById('streamUrl').value = 'rtmps://live-api-s.facebook.com:443/rtmp/{stream_key}';
+                document.getElementById('streamVideoCodec').value = 'libx264';
+                document.getElementById('streamVideoBitrate').value = '3000';
+                document.getElementById('streamFps').value = '30';
+                document.getElementById('streamResolution').value = '1280x720';
+                document.getElementById('streamPreset').value = 'medium';
+                document.getElementById('streamAudioCodec').value = 'aac';
+                document.getElementById('streamAudioBitrate').value = '128';
+                document.getElementById('streamAudioSamplerate').value = '48000';
+                document.getElementById('streamAudioChannels').value = '2';
+                break;
+
+            case 'bilibili':
+                document.getElementById('streamProtocol').value = 'rtmp';
+                document.getElementById('streamUrl').value = 'rtmp://live.bilibili.com/live-bvc/{stream_key}';
+                document.getElementById('streamVideoCodec').value = 'libx264';
+                document.getElementById('streamVideoBitrate').value = '3000';
+                document.getElementById('streamFps').value = '30';
+                document.getElementById('streamResolution').value = '1280x720';
+                document.getElementById('streamPreset').value = 'medium';
+                document.getElementById('streamAudioCodec').value = 'aac';
+                document.getElementById('streamAudioBitrate').value = '128';
+                document.getElementById('streamAudioSamplerate').value = '48000';
+                document.getElementById('streamAudioChannels').value = '2';
+                break;
+
+            case 'custom-rtmp':
+                document.getElementById('streamProtocol').value = 'rtmp';
+                document.getElementById('streamUrl').value = 'rtmp://server/app/streamkey';
+                document.getElementById('streamVideoCodec').value = 'libx264';
+                document.getElementById('streamVideoBitrate').value = '3000';
+                document.getElementById('streamFps').value = '30';
+                document.getElementById('streamResolution').value = '1280x720';
+                document.getElementById('streamPreset').value = 'medium';
+                document.getElementById('streamAudioCodec').value = 'aac';
+                document.getElementById('streamAudioBitrate').value = '128';
+                document.getElementById('streamAudioSamplerate').value = '48000';
+                document.getElementById('streamAudioChannels').value = '2';
+                break;
+
+            case 'hls':
+                document.getElementById('streamProtocol').value = 'hls';
+                document.getElementById('streamUrl').value = 'http://server/path/output.m3u8';
+                document.getElementById('streamVideoCodec').value = 'libx264';
+                document.getElementById('streamVideoBitrate').value = '3000';
+                document.getElementById('streamFps').value = '30';
+                document.getElementById('streamResolution').value = '1280x720';
+                document.getElementById('streamPreset').value = 'medium';
+                document.getElementById('streamAudioCodec').value = 'aac';
+                document.getElementById('streamAudioBitrate').value = '128';
+                document.getElementById('streamAudioSamplerate').value = '48000';
+                document.getElementById('streamAudioChannels').value = '2';
+                break;
+        }
+
+        generateStreamCommand();
+    }
+
+    function toggleStreamInput() {
+        const streamInput = document.getElementById('streamInput').value;
+        document.getElementById('streamFileInput').style.display = 'none';
+        document.getElementById('streamCameraInput').style.display = 'none';
+        document.getElementById('streamDesktopInput').style.display = 'none';
+        document.getElementById('streamRtspInput').style.display = 'none';
+        document.getElementById('streamUdpInput').style.display = 'none';
+
+        switch(streamInput) {
+            case 'file':
+                document.getElementById('streamFileInput').style.display = 'block';
+                break;
+            case 'camera':
+                document.getElementById('streamCameraInput').style.display = 'block';
+                break;
+            case 'desktop':
+                document.getElementById('streamDesktopInput').style.display = 'block';
+                break;
+            case 'rtsp':
+                document.getElementById('streamRtspInput').style.display = 'block';
+                break;
+            case 'udp':
+                document.getElementById('streamUdpInput').style.display = 'block';
+                break;
+        }
+
+        generateStreamCommand();
+    }
+
+    function generateStreamCommand() {
+        let command = 'ffmpeg';
+
+        const streamInput = document.getElementById('streamInput').value;
+        switch(streamInput) {
+            case 'file':
+                const streamFile = document.getElementById('streamFile').value;
+                command += ` -i "${streamFile}"`;
+                break;
+            case 'camera':
+                const cameraDevice = document.getElementById('cameraDevice').value;
+                command += ` -f dshow -i video="${cameraDevice}"`;
+                break;
+            case 'desktop':
+                const desktopParams = document.getElementById('desktopParams').value;
+                command += ` ${desktopParams}`;
+                break;
+            case 'rtsp':
+                const rtspUrl = document.getElementById('rtspUrl').value;
+                command += ` -i "${rtspUrl}"`;
+                break;
+            case 'udp':
+                const udpUrl = document.getElementById('udpUrl').value;
+                command += ` -i "${udpUrl}"`;
+                break;
+        }
+
+        const streamVideoCodec = document.getElementById('streamVideoCodec').value;
+        if (streamVideoCodec) {
+            command += ` -c:v ${streamVideoCodec}`;
+        }
+
+        const streamVideoBitrate = document.getElementById('streamVideoBitrate').value;
+        if (streamVideoBitrate) {
+            command += ` -b:v ${streamVideoBitrate}k`;
+        }
+
+        const streamFps = document.getElementById('streamFps').value;
+        if (streamFps) {
+            command += ` -r ${streamFps}`;
+        }
+
+        const streamResolution = document.getElementById('streamResolution').value;
+        if (streamResolution) {
+            command += ` -s ${streamResolution}`;
+        }
+
+        const streamPreset = document.getElementById('streamPreset').value;
+        if (streamPreset) {
+            command += ` -preset ${streamPreset}`;
+        }
+
+        const gopSize = document.getElementById('gopSize').value;
+        if (gopSize) {
+            command += ` -g ${gopSize}`;
+        }
+
+        const streamAudioCodec = document.getElementById('streamAudioCodec').value;
+        if (streamAudioCodec) {
+            command += ` -c:a ${streamAudioCodec}`;
+        }
+
+        const streamAudioBitrate = document.getElementById('streamAudioBitrate').value;
+        if (streamAudioBitrate) {
+            command += ` -b:a ${streamAudioBitrate}k`;
+        }
+
+        const streamAudioSamplerate = document.getElementById('streamAudioSamplerate').value;
+        if (streamAudioSamplerate) {
+            command += ` -ar ${streamAudioSamplerate}`;
+        }
+
+        const streamAudioChannels = document.getElementById('streamAudioChannels').value;
+        if (streamAudioChannels) {
+            command += ` -ac ${streamAudioChannels}`;
+        }
+
+        const streamLoop = document.getElementById('streamLoop').checked;
+        if (streamLoop) {
+            command += ' -stream_loop -1';
+        }
+
+        const streamRtbufsize = document.getElementById('streamRtbufsize').checked;
+        if (streamRtbufsize) {
+            const rtbufsize = document.getElementById('rtbufsize').value;
+            command += ` -rtbufsize ${rtbufsize}`;
+        }
+
+        const streamCustomParams = document.getElementById('streamCustomParams').value;
+        if (streamCustomParams) {
+            command += ` ${streamCustomParams}`;
+        }
+
+        const streamProtocol = document.getElementById('streamProtocol').value;
+        const streamUrl = document.getElementById('streamUrl').value;
+        if (streamProtocol && streamUrl) {
+            command += ` -f ${streamProtocol} "${streamUrl}"`;
+        }
+
+        document.getElementById('streamCommandText').textContent = command;
+    }
+
+    function copyStreamCommand() {
+        const commandText = document.getElementById('streamCommandText').textContent;
+        navigator.clipboard.writeText(commandText).then(() => {
+            const btn = event.target;
+            btn.textContent = '✓ 已复制';
+            setTimeout(() => {
+                btn.textContent = '📋 复制';
+            }, 2000);
+        });
+    }
+</script>
+
+</body>
+</html>

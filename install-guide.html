@@ -1,0 +1,536 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>FFmpeg 安装指南 - 完整教程</title>
+    <meta name="keywords" content="FFmpeg安装,视频处理,环境配置">
+    <meta name="description" content="详细的FFmpeg安装指南，包含Windows、macOS、Linux等多个平台的安装步骤和配置方法">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-button.active { @apply border-b-2 border-blue-500 text-blue-600; }
+        code { @apply bg-gray-900 text-gray-100 px-2 py-1 rounded text-sm font-mono; }
+        pre { @apply bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto; }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+<main class="min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <!-- 页头 -->
+        <div class="mb-8">
+            <a href="index.html" class="inline-block px-4 py-2 text-blue-600 hover:text-blue-800 font-medium mb-4">← 返回命令生成器</a>
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">📖 FFmpeg 安装指南</h1>
+            <p class="text-gray-600">详细的FFmpeg安装和配置教程，支持Windows、macOS、Linux等多个平台</p>
+        </div>
+
+        <!-- 平台导航 -->
+        <div class="flex gap-2 border-b border-gray-300 mb-8 overflow-x-auto">
+            <button class="tab-button active px-4 py-3 font-medium text-gray-700 hover:text-blue-600 transition whitespace-nowrap" onclick="switchTab('windows')">🪟 Windows</button>
+            <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 transition whitespace-nowrap" onclick="switchTab('mac')">🍎 macOS</button>
+            <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 transition whitespace-nowrap" onclick="switchTab('linux')">🐧 Linux</button>
+            <button class="tab-button px-4 py-3 font-medium text-gray-700 hover:text-blue-600 transition whitespace-nowrap" onclick="switchTab('source')">⚙️ 从源码编译</button>
+        </div>
+
+        <!-- Windows 安装 -->
+        <div id="windows" class="tab-content active space-y-6">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Windows 安装指南</h2>
+                
+                <div class="space-y-6">
+                    <!-- 方法1：使用 Chocolatey -->
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">方法1：使用 Chocolatey (推荐)</h3>
+                        <p class="text-gray-700 mb-3">这是最简单快捷的安装方法。</p>
+                        <ol class="space-y-3 mb-4">
+                            <li class="text-gray-700">
+                                <strong>1. 安装 Chocolatey</strong> (如果未安装)
+                                <p class="text-sm text-gray-600 mt-1">以管理员身份打开 PowerShell，运行：</p>
+                                <pre class="mt-2">Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+iwr -useb https://community.chocolatey.org/install.ps1 | iex</pre>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>2. 安装 FFmpeg</strong>
+                                <p class="text-sm text-gray-600 mt-1">在 PowerShell 中运行：</p>
+                                <pre class="mt-2">choco install ffmpeg -y</pre>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>3. 验证安装</strong>
+                                <pre class="mt-2">ffmpeg -version</pre>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- 方法2：手动下载 -->
+                    <div class="border-l-4 border-green-500 pl-4">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">方法2：手动下载</h3>
+                        <ol class="space-y-3 mb-4">
+                            <li class="text-gray-700">
+                                <strong>1. 下载 FFmpeg</strong>
+                                <p class="text-sm text-gray-600 mt-1">访问 <a href="https://ffmpeg.org/download.html" target="_blank" class="text-blue-600 hover:underline">https://ffmpeg.org/download.html</a></p>
+                                <p class="text-sm text-gray-600 mt-1">选择 Windows 版本，或从 <a href="https://www.gyan.dev/ffmpeg/builds/" target="_blank" class="text-blue-600 hover:underline">Gyan.dev</a> 下载最新编译版本</p>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>2. 解压文件</strong>
+                                <p class="text-sm text-gray-600 mt-1">解压下载的 zip 文件到某个位置，例如 <code>C:\ffmpeg</code></p>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>3. 添加到 PATH</strong>
+                                <p class="text-sm text-gray-600 mt-1">右键点击"此电脑" → 属性 → 高级系统设置 → 环境变量</p>
+                                <p class="text-sm text-gray-600 mt-1">在系统变量中添加 FFmpeg 的 bin 文件夹路径（例如 <code>C:\ffmpeg\bin</code>）</p>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>4. 验证安装</strong>
+                                <p class="text-sm text-gray-600 mt-1">打开新的命令提示符，运行：</p>
+                                <pre class="mt-2">ffmpeg -version</pre>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- 方法3：使用 Winget -->
+                    <div class="border-l-4 border-purple-500 pl-4">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">方法3：使用 Windows Package Manager</h3>
+                        <p class="text-gray-700 mb-3">需要 Windows 10/11 且已安装 Winget</p>
+                        <pre class="mb-4">winget install FFmpeg</pre>
+                        <p class="text-gray-700 mb-3">验证安装：</p>
+                        <pre>ffmpeg -version</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 故障排除 -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">⚠️ 故障排除</h2>
+                <div class="space-y-4">
+                    <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <p class="font-medium text-gray-900">问题：显示 "ffmpeg 不是内部或外部命令"</p>
+                        <p class="text-sm text-gray-700 mt-2">解决方案：</p>
+                        <ul class="text-sm text-gray-700 mt-2 list-disc list-inside space-y-1">
+                            <li>确认 FFmpeg 已正确安装</li>
+                            <li>检查 PATH 环境变量是否包含 FFmpeg bin 文件夹路径</li>
+                            <li>重启命令提示符或 PowerShell</li>
+                            <li>可能需要重启计算机</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <p class="font-medium text-gray-900">问题：权限不足错误</p>
+                        <p class="text-sm text-gray-700 mt-2">解决方案：以管理员身份运行命令提示符或 PowerShell</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- macOS 安装 -->
+        <div id="mac" class="tab-content space-y-6">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">macOS 安装指南</h2>
+                
+                <div class="space-y-6">
+                    <!-- 方法1：使用 Homebrew -->
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">方法1：使用 Homebrew (推荐)</h3>
+                        <p class="text-gray-700 mb-3">Homebrew 是 macOS 最流行的包管理工具</p>
+                        <ol class="space-y-3 mb-4">
+                            <li class="text-gray-700">
+                                <strong>1. 安装 Homebrew</strong> (如果未安装)
+                                <pre class="mt-2">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</pre>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>2. 安装 FFmpeg</strong>
+                                <pre class="mt-2">brew install ffmpeg</pre>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>3. 验证安装</strong>
+                                <pre class="mt-2">ffmpeg -version</pre>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- 方法2：MacPorts -->
+                    <div class="border-l-4 border-green-500 pl-4">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">方法2：使用 MacPorts</h3>
+                        <ol class="space-y-3 mb-4">
+                            <li class="text-gray-700">
+                                <strong>1. 安装 MacPorts</strong>
+                                <p class="text-sm text-gray-600 mt-1">访问 <a href="https://www.macports.org/install.php" target="_blank" class="text-blue-600 hover:underline">MacPorts</a> 并按照说明安装</p>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>2. 安装 FFmpeg</strong>
+                                <pre class="mt-2">sudo port install ffmpeg</pre>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>3. 验证安装</strong>
+                                <pre class="mt-2">ffmpeg -version</pre>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- 方法3：手动编译 -->
+                    <div class="border-l-4 border-purple-500 pl-4">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">方法3：手动下载预编译版本</h3>
+                        <ol class="space-y-3 mb-4">
+                            <li class="text-gray-700">
+                                <strong>1. 下载</strong>
+                                <p class="text-sm text-gray-600 mt-1">从 <a href="https://ffmpeg.org/download.html" target="_blank" class="text-blue-600 hover:underline">FFmpeg 官网</a> 下载 macOS 版本</p>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>2. 解压并移动</strong>
+                                <pre class="mt-2">tar xjf ffmpeg-*.tbz2
+sudo mv ffmpeg /usr/local/bin/</pre>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>3. 设置权限</strong>
+                                <pre class="mt-2">sudo chmod +x /usr/local/bin/ffmpeg</pre>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>4. 验证安装</strong>
+                                <pre class="mt-2">ffmpeg -version</pre>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 故障排除 -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">⚠️ 故障排除</h2>
+                <div class="space-y-4">
+                    <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <p class="font-medium text-gray-900">问题：M1/M2 Mac 兼容性</p>
+                        <p class="text-sm text-gray-700 mt-2">如果使用 Homebrew 安装，它会自动选择合适的版本</p>
+                        <p class="text-sm text-gray-700 mt-2">验证是否支持原生 ARM64：</p>
+                        <pre class="mt-2">file $(which ffmpeg)</pre>
+                    </div>
+                    <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <p class="font-medium text-gray-900">问题："无法打开文件"或权限错误</p>
+                        <p class="text-sm text-gray-700 mt-2">尝试在命令前添加 sudo，或检查文件权限</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Linux 安装 -->
+        <div id="linux" class="tab-content space-y-6">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Linux 安装指南</h2>
+                
+                <div class="space-y-6">
+                    <!-- Ubuntu/Debian -->
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Ubuntu / Debian</h3>
+                        <pre class="mb-4">sudo apt update
+sudo apt install ffmpeg</pre>
+                        <p class="text-gray-700 mb-3">验证安装：</p>
+                        <pre>ffmpeg -version</pre>
+                    </div>
+
+                    <!-- Fedora/RHEL -->
+                    <div class="border-l-4 border-green-500 pl-4">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Fedora / RHEL / CentOS</h3>
+                        <p class="text-gray-700 mb-3">对于 RHEL/CentOS，需要先启用 EPEL 仓库：</p>
+                        <pre class="mb-4">sudo dnf install epel-release
+sudo dnf install ffmpeg</pre>
+                        <p class="text-gray-700 mb-3">验证安装：</p>
+                        <pre>ffmpeg -version</pre>
+                    </div>
+
+                    <!-- Arch Linux -->
+                    <div class="border-l-4 border-purple-500 pl-4">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Arch Linux</h3>
+                        <pre class="mb-4">sudo pacman -S ffmpeg</pre>
+                        <p class="text-gray-700 mb-3">验证安装：</p>
+                        <pre>ffmpeg -version</pre>
+                    </div>
+
+                    <!-- openSUSE -->
+                    <div class="border-l-4 border-orange-500 pl-4">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">openSUSE</h3>
+                        <pre class="mb-4">sudo zypper install ffmpeg</pre>
+                        <p class="text-gray-700 mb-3">验证安装：</p>
+                        <pre>ffmpeg -version</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 故障排除 -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">⚠️ 故障排除</h2>
+                <div class="space-y-4">
+                    <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <p class="font-medium text-gray-900">问题：软件包未找到</p>
+                        <p class="text-sm text-gray-700 mt-2">确保已更新包管理器：</p>
+                        <pre class="mt-2">sudo apt update  # Ubuntu/Debian
+sudo dnf check-update  # Fedora</pre>
+                    </div>
+                    <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <p class="font-medium text-gray-900">问题：某些编码器不可用</p>
+                        <p class="text-sm text-gray-700 mt-2">可能需要安装额外的库或从源码编译。参考"从源码编译"部分</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 从源码编译 -->
+        <div id="source" class="tab-content space-y-6">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">从源码编译 FFmpeg</h2>
+                
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <p class="text-blue-900">
+                        <strong>💡 何时需要从源码编译？</strong><br>
+                        当预编译版本缺少某些编码器、滤镜或库支持时，或需要最新功能时。
+                    </p>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- 系统要求 -->
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">系统要求</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>• GCC 或 Clang 编译器</li>
+                            <li>• 必要的开发库（yasm、nasm 等）</li>
+                            <li>• Git（获取最新源码）</li>
+                            <li>• Make 工具</li>
+                        </ul>
+                    </div>
+
+                    <!-- 编译步骤 -->
+                    <div class="border-l-4 border-green-500 pl-4">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">编译步骤（Linux/macOS）</h3>
+                        <ol class="space-y-3 text-gray-700">
+                            <li class="text-gray-700">
+                                <strong>1. 安装依赖</strong>
+                                <p class="text-sm text-gray-600 mt-1">Ubuntu/Debian：</p>
+                                <pre class="mt-2">sudo apt install build-essential yasm pkg-config libx264-dev libx265-dev libopus-dev libvpx-dev</pre>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>2. 克隆仓库</strong>
+                                <pre class="mt-2">git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+cd ffmpeg</pre>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>3. 配置编译选项</strong>
+                                <pre class="mt-2">./configure --enable-gpl --enable-libx264 --enable-libx265 --enable-libopus --enable-libvpx</pre>
+                                <p class="text-sm text-gray-600 mt-2">常用选项：</p>
+                                <ul class="text-sm text-gray-600 mt-2 list-disc list-inside">
+                                    <li><code>--enable-gpl</code> - 启用 GPL 库（必须）</li>
+                                    <li><code>--enable-libx264</code> - H.264 支持</li>
+                                    <li><code>--enable-libx265</code> - H.265 支持</li>
+                                    <li><code>--enable-libopus</code> - Opus 音频</li>
+                                    <li><code>--enable-libvpx</code> - VP8/VP9 支持</li>
+                                    <li><code>--prefix=/usr/local</code> - 安装位置</li>
+                                </ul>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>4. 编译和安装</strong>
+                                <pre class="mt-2">make -j$(nproc)
+sudo make install</pre>
+                            </li>
+                            <li class="text-gray-700">
+                                <strong>5. 验证安装</strong>
+                                <pre class="mt-2">ffmpeg -version
+ffmpeg -encoders | grep -i x264</pre>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Windows 编译 -->
+                    <div class="border-l-4 border-purple-500 pl-4">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Windows 上编译</h3>
+                        <p class="text-gray-700 mb-3">Windows 上编译较为复杂，建议使用预编译版本或在 WSL 中编译</p>
+                        <p class="text-gray-700 mb-3"><strong>使用 WSL 编译：</strong></p>
+                        <ol class="space-y-2 text-sm text-gray-700 list-decimal list-inside">
+                            <li>安装 Windows Subsystem for Linux (WSL)</li>
+                            <li>在 WSL 中按照 Linux 步骤编译</li>
+                            <li>编译完成后的 ffmpeg 可在 Windows 中使用</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 高级配置 -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">⚙️ 高级配置</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">启用硬件加速</h4>
+                        <p class="text-sm text-gray-700 mb-2">NVIDIA GPU：</p>
+                        <pre>./configure --enable-cuda-nvcc --enable-cuvid --enable-nvenc</pre>
+                        <p class="text-sm text-gray-700 mb-2 mt-4">Intel Quick Sync：</p>
+                        <pre>./configure --enable-libmfx</pre>
+                        <p class="text-sm text-gray-700 mb-2 mt-4">AMD VCE：</p>
+                        <pre>./configure --enable-amf</pre>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">启用所有编码器</h4>
+                        <pre>./configure --enable-gpl --enable-nonfree --enable-libx264 --enable-libx265 --enable-libopus --enable-libvpx --enable-libmp3lame --enable-libfdk-aac</pre>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">查看所有可用选项</h4>
+                        <pre>./configure --help | grep enable</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 常见问题 -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">❓ 常见问题 (FAQ)</h2>
+            
+            <div class="space-y-4">
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <p class="font-semibold text-gray-900">Q: 如何检查已安装的编码器和滤镜？</p>
+                    <pre class="mt-2">ffmpeg -encoders        # 查看所有编码器
+ffmpeg -decoders        # 查看所有解码器
+ffmpeg -filters         # 查看所有滤镜
+ffmpeg -protocols       # 查看所有协议</pre>
+                </div>
+
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <p class="font-semibold text-gray-900">Q: 如何获取媒体文件信息？</p>
+                    <pre class="mt-2">ffprobe -show_format -show_streams input.mp4</pre>
+                </div>
+
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <p class="font-semibold text-gray-900">Q: FFmpeg 版本过旧，如何升级？</p>
+                    <p class="text-sm text-gray-700 mt-2">使用包管理器卸载并重新安装：</p>
+                    <pre class="mt-2">sudo apt remove ffmpeg  # Debian/Ubuntu
+sudo apt install ffmpeg
+
+# 或从源码编译获取最新版本</pre>
+                </div>
+
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <p class="font-semibold text-gray-900">Q: 某些编码器显示 "Unknown encoder"</p>
+                    <p class="text-sm text-gray-700 mt-2">这意味着 FFmpeg 编译时未启用该编码器。需要从源码重新编译，启用相应的库。</p>
+                </div>
+
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <p class="font-semibold text-gray-900">Q: 如何卸载 FFmpeg？</p>
+                    <p class="text-sm text-gray-700 mt-2">使用包管理器卸载：</p>
+                    <pre class="mt-2">sudo apt remove ffmpeg      # Debian/Ubuntu
+brew uninstall ffmpeg       # macOS
+choco uninstall ffmpeg -y   # Windows (Chocolatey)</pre>
+                    <p class="text-sm text-gray-700 mt-2">如果是手动安装，删除相应文件和 PATH 配置即可。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 官方资源 -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">📚 官方资源</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="https://ffmpeg.org/" target="_blank" class="p-4 border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:shadow-md transition">
+                    <h3 class="font-semibold text-blue-600 mb-1">🌐 FFmpeg 官网</h3>
+                    <p class="text-sm text-gray-600">获取最新版本和官方文档</p>
+                </a>
+
+                <a href="https://ffmpeg.org/documentation.html" target="_blank" class="p-4 border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:shadow-md transition">
+                    <h3 class="font-semibold text-blue-600 mb-1">📖 完整文档</h3>
+                    <p class="text-sm text-gray-600">FFmpeg 命令和 API 文档</p>
+                </a>
+
+                <a href="https://trac.ffmpeg.org/wiki/Encode/H.264" target="_blank" class="p-4 border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:shadow-md transition">
+                    <h3 class="font-semibold text-blue-600 mb-1">🎬 编码指南</h3>
+                    <p class="text-sm text-gray-600">详细的编码器配置和优化</p>
+                </a>
+
+                <a href="https://trac.ffmpeg.org/wiki/Scaling" target="_blank" class="p-4 border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:shadow-md transition">
+                    <h3 class="font-semibold text-blue-600 mb-1">📐 视频缩放</h3>
+                    <p class="text-sm text-gray-600">缩放和分辨率处理指南</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- 最佳实践 -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">✅ 最佳实践</h2>
+            
+            <div class="space-y-4">
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center justify-center h-8 w-8 rounded-md bg-green-500 text-white">
+                            <span class="text-lg">1</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">定期更新</h3>
+                        <p class="text-sm text-gray-700">定期更新 FFmpeg 以获得最新特性和安全补丁</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center justify-center h-8 w-8 rounded-md bg-green-500 text-white">
+                            <span class="text-lg">2</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">验证功能</h3>
+                        <p class="text-sm text-gray-700">安装后运行 <code>ffmpeg -version</code> 确认安装成功</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center justify-center h-8 w-8 rounded-md bg-green-500 text-white">
+                            <span class="text-lg">3</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">支持多个编码器</h3>
+                        <p class="text-sm text-gray-700">确保 FFmpeg 支持你需要的编码器（H.264、H.265、VP9 等）</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center justify-center h-8 w-8 rounded-md bg-green-500 text-white">
+                            <span class="text-lg">4</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">测试编码</h3>
+                        <p class="text-sm text-gray-700">在批量处理前用单个文件测试你的命令</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center justify-center h-8 w-8 rounded-md bg-green-500 text-white">
+                            <span class="text-lg">5</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">查看文档</h3>
+                        <p class="text-sm text-gray-700">参考官方文档了解各种选项和最佳实践</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('active');
+        });
+        document.getElementById(tab).classList.add('active');
+        document.querySelector(`.tab-button[onclick="switchTab('${tab}')"]`).classList.add('active');
+    }
+</script>
+
+</body>
+</html>
+
