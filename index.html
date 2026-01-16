@@ -375,7 +375,7 @@
                         <h2 class="text-lg font-semibold text-gray-900 mb-4">💻 生成的<span id="outputType">命令</span></h2>
                         <div class="relative">
                             <pre id="commandText" class="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-xs overflow-x-auto max-h-96">ffmpeg -i input.mp4 output.mp4</pre>
-                            <button onclick="copyCommand()" class="absolute top-2 right-2 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded transition">📋 复制</button>
+                            <button onclick="copyCommand(event)" class="absolute top-2 right-2 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded transition">📋 复制</button>
                         </div>
                     </div>
                 </div>
@@ -591,7 +591,7 @@
                         <h2 class="text-lg font-semibold text-gray-900 mb-4">💻 推流命令</h2>
                         <div class="relative">
                             <pre id="streamCommandText" class="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-xs overflow-x-auto max-h-96">ffmpeg -i input.mp4 -c:v libx264 -preset fast -b:v 2500k -c:a aac -b:a 128k -f flv rtmp://server/app/key</pre>
-                            <button onclick="copyStreamCommand()" class="absolute top-2 right-2 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded transition">📋 复制</button>
+                            <button onclick="copyStreamCommand(event)" class="absolute top-2 right-2 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded transition">📋 复制</button>
                         </div>
                         <div class="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
                             <p class="text-xs text-yellow-800">
@@ -608,6 +608,43 @@
         </div>
     </div>
 </main>
+
+<!-- 页脚 -->
+<footer class="bg-gray-900 text-gray-100 py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div>
+                <h3 class="text-lg font-semibold mb-3">快点FFmpeg命令生成器</h3>
+                <p class="text-gray-400 text-sm">专业的FFmpeg命令生成工具，支持视频处理、音频处理、批量转换和直播推流等功能。</p>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-3">快速链接</h3>
+                <ul class="text-gray-400 text-sm space-y-2">
+                    <li><a href="#" class="hover:text-blue-400 transition">🎬 视频处理</a></li>
+                    <li><a href="#" class="hover:text-blue-400 transition">📡 直播推流</a></li>
+                    <li><a href="install-guide.html" class="hover:text-blue-400 transition">📖 安装指南</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-3">关于项目</h3>
+                <ul class="text-gray-400 text-sm space-y-2">
+                    <li><a href="https://github.com/muzihuaner/ffmpeg-commander" target="_blank" class="hover:text-blue-400 transition">🔗 GitHub 仓库</a></li>
+                    <li><a href="https://github.com/muzihuaner/ffmpeg-commander/issues" target="_blank" class="hover:text-blue-400 transition">🐛 报告问题</a></li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 pt-6">
+            <div class="flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+                <p>©  快点FFmpeg 命令生成器 | 使用 MIT 许可证</p>
+                <p class="mt-3 md:mt-0">
+                    Made with ❤️ by <a href="https://github.com/muzihuaner" target="_blank" class="hover:text-blue-400 transition">muzihuaner</a> | 
+                    <a href="https://github.com/muzihuaner/ffmpeg-commander" target="_blank" class="hover:text-blue-400 transition">Star on GitHub</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
 
 <script>
     const defaultValues = {
@@ -1133,7 +1170,7 @@
         document.getElementById('commandText').textContent = script;
     }
 
-    function copyCommand() {
+    function copyCommand(event) {
         const commandText = document.getElementById('commandText').textContent;
         navigator.clipboard.writeText(commandText).then(() => {
             const btn = event.target;
@@ -1483,7 +1520,7 @@
         document.getElementById('streamCommandText').textContent = command;
     }
 
-    function copyStreamCommand() {
+    function copyStreamCommand(event) {
         const commandText = document.getElementById('streamCommandText').textContent;
         navigator.clipboard.writeText(commandText).then(() => {
             const btn = event.target;
